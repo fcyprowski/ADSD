@@ -1,7 +1,7 @@
 
 # tu powinny być wszystkie funkcje
 
-funkcja = function(url, token){
+getPageWithUrl = function(url, token){
   #tutaj wyciaga id z urla
   id = gsub('http://facebook.com/', '', url)
   id = gsub('/', '', id)
@@ -11,7 +11,7 @@ funkcja = function(url, token){
   
 }
 
-ranked_function = function(ex_data) {
+commentersRank = function(ex_data) {
   x = ex_data %>%
     group_by(Plant) %>%
     summarise(total = n()) %>%
