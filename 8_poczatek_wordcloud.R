@@ -1,0 +1,41 @@
+library(Rfacebook)
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
+
+token = '142035436352490|Ne4qpqldAF8ilSM2K1LUFrt5ZxE'
+id = '63563473556'
+dane = getPage(id, token, n=100)
+
+dane_wspolczesna_csv = write.csv(dane, file = "dane_wspolczesna.csv",row.names=TRUE, na="")
+text <- readLines(file.choose())
+docs <- Corpus(VectorSource(text))
+inspect(docs)
+
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+docs <- tm_map(docs, toSpace, "/")
+docs <- tm_map(docs, toSpace, "@")
+docs <- tm_map(docs, toSpace, "\\|")
+
+# Convert the text to lower case
+docs <- tm_map(docs, content_transformer(tolower))
+# Remove numbers
+docs <- tm_map(docs, removeNumbers)
+# Remove english common stopwords
+docs <- tm_map(docs, removeWords, stopwords("english"))
+# Remove your own stop word
+# specify your stopwords as a character vector
+docs <- tm_map(docs, removeWords, c("blabla1", "blabla2")) 
+# Remove punctuations
+docs <- tm_map(docs, removePunctuation)
+# Eliminate extra white spaces
+docs <- tm_map(docs, stripWhitespace)
+# Text stemming
+# docs <- tm_map(docs, stemDocument)
+
+dtm <- TermDocumentMatrix(docs)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+head(d, 10)
